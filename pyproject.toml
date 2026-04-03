@@ -1,0 +1,20 @@
+[project]
+name = "chateo-be"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Georgios Semerdzhiev",email = "semerdzhiev.georgios@icloud.com"}
+]
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "fastapi (>=0.135.3,<0.136.0)"
+]
+
+[tool.poetry]
+packages = [{include = "chateo_be", from = "src"}]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
