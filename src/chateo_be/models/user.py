@@ -1,7 +1,8 @@
 import uuid
+from datetime import datetime
 
 import bcrypt
-from sqlalchemy import Column, String, Uuid
+from sqlalchemy import Column, DateTime, String, Uuid
 
 from src.chateo_be.models.base import Base
 
@@ -14,6 +15,9 @@ class User(Base):
     first_name = Column(String, nullable=False)
     last_name = Column(String, nullable=True)
     pin_hash = Column(String, nullable=False)
+
+    created_at = Column(DateTime, default=datetime.utcnow)
+    last_online = Column(DateTime, nullable=True)
 
     # --- PIN VALIDATION ---
     @staticmethod
