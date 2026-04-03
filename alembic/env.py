@@ -8,9 +8,9 @@ from src.chateo_be.models.base import Base
 
 # Register models
 from src.chateo_be.models.user import User  # noqa: F401
-from src.chateo_be.utils.env_settings import EnvConfig
+from src.chateo_be.utils.env_settings import get_settings
 
-env_config = EnvConfig()
+env_config = get_settings()
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
