@@ -12,7 +12,7 @@ class User(Base):
     id = Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
     phone_number = Column(String, nullable=False, unique=True)
     first_name = Column(String, nullable=False)
-    last_name = Column(String, nullable=False)
+    last_name = Column(String, nullable=True)
     pin_hash = Column(String, nullable=False)
 
     # --- PIN VALIDATION ---

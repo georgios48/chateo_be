@@ -48,3 +48,27 @@ async def test_does_phone_number_exist_rejects_blank_phone(users_test_app) -> No
         users_test_app.dependency_overrides.clear()
 
     assert response.status_code == 422
+
+
+@pytest.mark.asyncio
+async def test_create_user_rejects_invalid_pin(users_test_app) -> None:
+    async def override_session():
+        yield AsyncMock()
+
+    users_test_app.dependency_overrides[get_main_session] = override_session
+    transport = ASGITransport(app=users_test_app)
+    try:
+        async with AsyncClient(transport=transport, base_url="http://test") as client:
+            response = await client.post(
+                "/users/create-user",
+                json={
+                    "phone_number": "+15550001111",
+                    "first_name": "A",
+                    "last_name": "B",
+                    "pin": "12",
+                },
+            )
+    finally:
+        users_test_app.dependency_overrides.clear()
+
+    assert response.status_code == 422
