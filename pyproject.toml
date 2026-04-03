@@ -19,6 +19,14 @@ dependencies = [
 [tool.poetry]
 packages = [{include = "chateo_be", from = "src"}]
 
+[tool.poetry.group.dev.dependencies]
+pytest = ">=8.0,<9.0"
+pytest-asyncio = ">=0.24,<1.0"
+httpx = ">=0.28,<1.0"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]

@@ -19,7 +19,7 @@ def get_env_var(
                 break
     if required and not val:
         raise ValueError(f"Missing required environment variable: {key}")
-    return val
+    return val or ""
 
 
 @dataclass
@@ -39,6 +39,16 @@ class EnvConfig:
 
     # Database URL
     database_url: str = field(default_factory=lambda: get_env_var("DATABASE_URL", required=True))
+
+    # CORS (comma-separated); default allows all for local dev
+    allowed_origins: tuple[str, ...] = field(
+        default_factory=lambda: tuple(
+            x.strip()
+            for x in get_env_var("ALLOWED_ORIGINS", required=False).split(",")
+            if x.strip()
+        )
+        or ("*",)
+    )
 
 
 @lru_cache
