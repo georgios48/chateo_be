@@ -7,9 +7,16 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-def get_env_var(key: str, required: bool = False) -> str:
+def get_env_var(
+    key: str, required: bool = False, *, aliases: tuple[str, ...] = ()
+) -> str:
     val = os.getenv(key)
-    if required and not val or val is None:
+    if not val:
+        for alt in aliases:
+            val = os.getenv(alt)
+            if val:
+                break
+    if required and not val:
         raise ValueError(f"Missing required environment variable: {key}")
     return val
 
@@ -23,4 +30,11 @@ class EnvConfig:
     """
 
     # Environment
-    environment: str = field(default_factory=lambda: get_env_var("ENVIRONMENT", required=True))
+    environment: str = field(
+        default_factory=lambda: get_env_var(
+            "ENVIRONMENT", required=True, aliases=("environment",)
+        )
+    )
+
+    # Database URL
+    database_url: str = field(default_factory=lambda: get_env_var("DATABASE_URL", required=True))

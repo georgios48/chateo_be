@@ -1,14 +1,16 @@
-import bcrypt
-from sqlalchemy import Column, String
-from sqlalchemy.orm import declarative_base
+import uuid
 
-Base = declarative_base()
+import bcrypt
+from sqlalchemy import Column, String, Uuid
+
+from src.chateo_be.models.base import Base
 
 
 class User(Base):
     __tablename__ = "users"
 
-    phone_number = Column(String, primary_key=True)
+    id = Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    phone_number = Column(String, nullable=False, unique=True)
     first_name = Column(String, nullable=False)
     last_name = Column(String, nullable=False)
     pin_hash = Column(String, nullable=False)
@@ -31,4 +33,4 @@ class User(Base):
         return bcrypt.checkpw(pin.encode(), self.pin_hash.encode())
 
     def __repr__(self):
-        return f"<User(phone_number={self.phone_number}, name={self.first_name} {self.last_name})>"
+        return f"<User(id={self.id}, phone_number={self.phone_number}, name={self.first_name} {self.last_name})>"
