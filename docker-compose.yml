@@ -1,0 +1,42 @@
+services:
+  chateo_postgres:
+    image: postgres:18
+    container_name: chateo_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: chateo_user
+      POSTGRES_PASSWORD: ${CHATEO_USER_PASSWORD}
+      POSTGRES_DB: chateo_db
+    ports:
+      # Avoid clash with a local Postgres on the host (often already on 5432).
+      - "5455:5432"
+    volumes:
+      # Postgres 18+ expects one mount at /var/lib/postgresql (not .../data).
+      - pg_data_18:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U chateo_user -d chateo_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: chateo_app
+    restart: unless-stopped
+    depends_on:
+      chateo_postgres:
+        condition: service_healthy # Waits until postgres is READY, not just started
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+    env_file:
+      - .env
+    volumes:
+      - ./logs:/src/logs # Persist logs outside Docker for rotation & debugging
+
+volumes:
+  pg_data_18:
+    #! WARNING: 'docker compose down -v' will delete this volume!
+    #! Always use 'docker compose down' (without -v) to keep data safe.
+    #! Backups are stored in ./db_backups/ for recovery.
