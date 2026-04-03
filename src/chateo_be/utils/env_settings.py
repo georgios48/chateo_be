@@ -1,5 +1,6 @@
 import os
 from dataclasses import dataclass, field
+from functools import lru_cache
 
 from dotenv import load_dotenv
 
@@ -38,3 +39,11 @@ class EnvConfig:
 
     # Database URL
     database_url: str = field(default_factory=lambda: get_env_var("DATABASE_URL", required=True))
+
+
+@lru_cache
+def get_settings():
+    """
+    Returns the environment configuration.
+    """
+    return EnvConfig()

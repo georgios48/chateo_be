@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from src.chateo_be.utils.env_settings import EnvConfig
+from src.chateo_be.utils.env_settings import get_settings
 
 
 @asynccontextmanager
@@ -19,7 +19,7 @@ async def lifespan(app: FastAPI):
     # On Shutdown
 
 # Load environment configuration
-config = EnvConfig()
+config = get_settings()
 
 # Set debug if it is dev/local
 debug = config.environment.lower() in {"dev", "local"}
@@ -35,3 +35,5 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Endpoints
