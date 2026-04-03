@@ -3,7 +3,11 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from src.chateo_be.utils.env_settings import get_settings
+from src.chateo_be.users import users_router
+from src.chateo_be.utils.env_settings import EnvConfig
+from src.db.database import AsyncDatabaseConnection
+
+config = EnvConfig()
 
 
 @asynccontextmanager
@@ -13,13 +17,12 @@ async def lifespan(app: FastAPI):
     """
 
     # On Start
+    app.state.db_main = AsyncDatabaseConnection(config.database_url)
 
     yield
 
     # On Shutdown
-
-# Load environment configuration
-config = get_settings()
+    await app.state.db_main.dispose()
 
 # Set debug if it is dev/local
 debug = config.environment.lower() in {"dev", "local"}
@@ -36,4 +39,4 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Endpoints
+app.include_router(users_router)
